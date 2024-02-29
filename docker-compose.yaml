@@ -1,0 +1,44 @@
+version: '3'
+
+
+networks:
+    TR_NAM_Docker:
+      name: TR_NAM_Docker
+      external: true
+      driver: macvlan
+      driver_opts:
+        parent: "enp2s0"
+      ipam:
+        config:
+           - subnet: 192.168.120.0/24
+             gateway: 192.168.120.1
+
+services:
+  mariadb:
+    image: mariadb:10.6
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Missani.3018
+      MYSQL_USER:  MyNima
+      MYSQL_PASSWORD: Missani.3018
+#    expose:
+#        - ""
+    ports:
+        - "3306:3306"
+    volumes:
+     - ./data/mysql:/var/lib/mysql
+    networks:
+      TR_NAM_Docker:
+        ipv4_address: 192.168.120.22
+              
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - "80:80"
+    environment:
+      - PMA_HOST=mariadb
+      - PMA_PORT=3306 
+    networks:
+      TR_NAM_Docker:
+        ipv4_address: 192.168.120.23
